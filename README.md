@@ -47,7 +47,7 @@ El sistema está construido bajo una arquitectura monolítica moderna utilizando
 * *Bloqueo automático de acceso ante credenciales incorrectas (Código de estado HTTP 401).*
 * *Filtrado exitoso de notas restringidas para usuarios sin privilegios administrativos.*
 ---
-## 🚀 . Recomendaciones de Mejora Continua
+##  Recomendaciones de Mejora Continua
 * Reemplazar los tokens simulados por **JWT (JSON Web Tokens)** firmados digitalmente mediante claves asimétricas y con tiempo de expiración limitado.
 * Implementar **Rate Limiting** en el endpoint de login para prevenir ataques de fuerza bruta y denegación de servicio (*DoS*).
 * Añadir un sistema centralizado de **Logging de Auditoría** para registrar IP, fecha, hora y resultado de cada intento de inicio de sesión.
