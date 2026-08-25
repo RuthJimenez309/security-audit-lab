@@ -1,4 +1,6 @@
 # Security Audit Lab -
+<img width="415" height="457" alt="image" src="https://github.com/user-attachments/assets/3d90da90-758b-45b7-91ce-5cb909c37519" />
+
 
 Laboratorio práctico de desarrollo seguro y auditoría de ciberseguridad enfocado en la mitigación de vulnerabilidades web comunes (OWASP Top 10), control de acceso basado en roles (RBAC) y prácticas de almacenamiento seguro de credenciales.
 
