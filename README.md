@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Security Audit Lab -
 
-## Getting Started
+Laboratorio práctico de desarrollo seguro y auditoría de ciberseguridad enfocado en la mitigación de vulnerabilidades web comunes (OWASP Top 10), control de acceso basado en roles (RBAC) y prácticas de almacenamiento seguro de credenciales.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 1. Arquitectura del Sistema
+El sistema está construido bajo una arquitectura monolítica moderna utilizando **Next.js (App Router)**, que integra tanto la interfaz de usuario (Frontend) como las rutas de servidor/API (Backend con Node.js):
+* **Frontend:** Desarrollado en React con TypeScript y estilizado con Tailwind CSS, maneja el estado de sesión de forma dinámica.
+* **Backend (API Routes):** Endpoints protegidos en el servidor que gestionan la lógica de negocio y las validaciones de acceso.
+* **Capa de Datos:** Conexión segura mediante un Pool de conexiones hacia una base de datos relacional en **PostgreSQL**.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 2. Inventario de Activos
+* **Base de Datos:** Tabla `users` (almacenamiento de credenciales con hashes y roles) y registros de notas confidenciales.
+* **Endpoints Protegidos:**
+  * `POST /api/login`: Valida credenciales contra la base de datos de manera cifrada.
+  * `GET /api/notes`: Endpoint protegido que filtra la información según el rol del usuario autenticado.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+##  3. Amenazas Identificadas (Basado en OWASP Top 10)
+* **A07:2021 - Identification and Authentication Failures:** Riesgo asociado a la exposición de contraseñas débiles o almacenadas en texto plano en la base de datos.
+* **A03:2021 - Injection:** Vulnerabilidad potencial ante la manipulación maliciosa de consultas SQL directas en los inputs de autenticación.
+* **A01:2021 - Broken Access Control:** Exposición indebida de recursos restringidos (notas confidenciales) a usuarios con privilegios estándar o sin autenticación.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+##  4. Vulnerabilidades y Hallazgos del Laboratorio
+1. **Almacenamiento Inseguro Histórico:** Demostración de por qué guardar contraseñas en texto plano vulnera la confidencialidad total del sistema ante brechas de datos.
+2. **Deficiencias de Control de Acceso (RBAC):** Sin una validación estricta de roles en el servidor, cualquier usuario podría intentar elevar privilegios de forma indebida.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+##  5. Controles Defensivos Implementados
+* **Hashing Criptográfico (`bcrypt`):** Las credenciales se procesan utilizando funciones de derivación de claves con un factor de costo (*salt rounds*), haciendo irreversible la recuperación de la contraseña plana.
+* **Consultas Parametrizadas (`$1`):** Neutralización absoluta de ataques de **Inyección SQL** al separar la estructura de la consulta de los datos introducidos por el usuario.
+* **Control de Acceso por Roles (RBAC):** Verificación de tokens y filtrado dinámico de información en el backend antes de renderizar la respuesta hacia el cliente.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 6. Pruebas y Evidencias
+* *Inicio de sesión exitoso con credenciales cifradas y retorno de roles correctos (`admin` / `user`).*
+* *Bloqueo automático de acceso ante credenciales incorrectas (Código de estado HTTP 401).*
+* *Filtrado exitoso de notas restringidas para usuarios sin privilegios administrativos.*
+---
+## 🚀 . Recomendaciones de Mejora Continua
+* Reemplazar los tokens simulados por **JWT (JSON Web Tokens)** firmados digitalmente mediante claves asimétricas y con tiempo de expiración limitado.
+* Implementar **Rate Limiting** en el endpoint de login para prevenir ataques de fuerza bruta y denegación de servicio (*DoS*).
+* Añadir un sistema centralizado de **Logging de Auditoría** para registrar IP, fecha, hora y resultado de cada intento de inicio de sesión.
